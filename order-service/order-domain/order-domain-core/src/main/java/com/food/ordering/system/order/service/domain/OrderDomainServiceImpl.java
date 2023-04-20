@@ -12,6 +12,7 @@ import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -63,15 +64,15 @@ public class OrderDomainServiceImpl implements OrderDomainService {
 	}
 
 	private void setOrderProductInformation(Order order, Restaurant restaurant) {
-		Map<String, Product> productMap = new HashMap<>();
+		Map<UUID, Product> productMap = new HashMap<>();
 		for (Product restaurantProduct : restaurant.getProducts()) {
-			productMap.put(restaurantProduct.getName(), restaurantProduct);
+			productMap.put(restaurantProduct.getId().getValue(), restaurantProduct);
 		}
 
 		order.getItems().forEach(orderItem -> {
 			Product currentProduct = orderItem.getProduct();
-			if (productMap.containsKey(currentProduct.getName())) {
-				Product restaurantProduct = productMap.get(currentProduct.getName());
+			if (productMap.containsKey(currentProduct.getId().getValue())) {
+				Product restaurantProduct = productMap.get(currentProduct.getId().getValue());
 				currentProduct.updateWithConfirmedNameAndPrice(restaurantProduct.getName(),
 						restaurantProduct.getPrice());
 			}

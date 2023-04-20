@@ -12,6 +12,7 @@ import com.food.ordering.system.order.service.domain.valueobject.StreetAddress;
 import com.food.ordering.system.service.domain.dto.create.CreateOrderCommand;
 import com.food.ordering.system.service.domain.dto.create.CreateOrderResponse;
 import com.food.ordering.system.service.domain.dto.create.OrderAddress;
+import com.food.ordering.system.service.domain.dto.track.TrackOrderResponse;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -25,7 +26,8 @@ public class OrderDataMapper {
 				.restaurantId(new RestaurantId(createOrderCommand.getRestaurantId()))
 				.products(createOrderCommand.getItems()
 						.stream()
-						.map(orderItem -> new Product(new ProductId(orderItem.getProductId()))).collect(
+						.map(orderItem -> new Product(new ProductId(orderItem.getProductId())))
+						.collect(
 								Collectors.toList()))
 				.build();
 	}
@@ -55,10 +57,19 @@ public class OrderDataMapper {
 				orderAddress.getPostalCode(), orderAddress.getCity());
 	}
 
-	public CreateOrderResponse orderToCreateOrderResponse(Order order) {
+	public CreateOrderResponse orderToCreateOrderResponse(Order order, String message) {
 		return CreateOrderResponse.builder()
 				.orderTrackingId(order.getTrackingId().getValue())
 				.orderStatus(order.getOrderStatus())
+				.message(message)
+				.build();
+	}
+
+	public TrackOrderResponse orderToTrackOrderResponse(Order order) {
+		return TrackOrderResponse.builder()
+				.orderTrackingId(order.getTrackingId().getValue())
+				.orderStatus(order.getOrderStatus())
+				.failureMessages(order.getFailureMessages())
 				.build();
 	}
 }
